@@ -1,5 +1,4 @@
 #------------------------------------------
-#--- Date:  09/04/2024
 #--- Python Ver: 3.12.3
 #------------------------------------------
 import sqlite3
@@ -9,52 +8,52 @@ DB_Name =  "IoT.sqlite3"
 
 # SQLite DB Table Schema
 TableSchema="""
-drop table if exists A_Data ;
-create table A_Data (
+drop table if exists Temperature_Data ;
+create table Temperature_Data (
   id integer primary key autoincrement,
   SensorID text,
   Date_n_Time text,
-  A text
+  Temperature text
 );
 
 
-drop table if exists B_Data ;
-create table B_Data (
+drop table if exists Humidity_Data ;
+create table Humidity_Data (
   id integer primary key autoincrement,
   SensorID text,
   Date_n_Time text,
-  B text
+  Humidity text
 );
-drop table if exists X_Data ;
-create table X_Data (
+drop table if exists Position_Data ;
+create table Position_Data (
   id integer primary key autoincrement,
   SensorID text,
   Date_n_Time text,
-  X text
-);
-
-drop table if exists Y_Data ;
-create table Y_Data (
-  id integer primary key autoincrement,
-  SensorID text,
-  Date_n_Time text,
-  Y text
+  Position text
 );
 
-drop table if exists Z_Data ;
-create table Z_Data (
+drop table if exists PaintLevel_Data ;
+create table PaintLevel_Data (
   id integer primary key autoincrement,
   SensorID text,
   Date_n_Time text,
-  Z text
+  PaintLevel text
 );
 
-drop table if exists W_Data ;
-create table W_Data (
+drop table if exists SurfaceQuality_Data ;
+create table SurfaceQuality_Data (
   id integer primary key autoincrement,
   SensorID text,
   Date_n_Time text,
-  W text
+  SurfaceQuality text
+);
+
+drop table if exists Flow_Data ;
+create table Flow_Data (
+  id integer primary key autoincrement,
+  SensorID text,
+  Date_n_Time text,
+  Flow text
 );
 """
 
