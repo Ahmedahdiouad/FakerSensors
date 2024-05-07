@@ -9,12 +9,16 @@ from datetime import datetime
 # MQTT Settings
 MQTT_Broker = "test.mosquitto.org"
 MQTT_Port = 1883
-MQTT_Topic_Temperature = "Factory/Machine1/1/Temperature"
-MQTT_Topic_Humidity = "Factory/Machine1/2/Humidity"
-MQTT_Topic_Flow = "Factory/Machine1/3/Flow"
-MQTT_Topic_Position = "Factory/Machine1/4/Position"
-MQTT_Topic_PaintLevel = "Factory/Machine1/5/PaintLevel"
-MQTT_Topic_SurfaceQuality = "Factory/Machine1/6/SurfaceQuality"
+
+# Topics for each sensor
+MQTT_Topics = {
+    "Temperature": "Factory/Machine1/1/Temperature",
+    "Humidity": "Factory/Machine1/2/Humidity",
+    "Flow": "Factory/Machine1/3/Flow",
+    "Position": "Factory/Machine1/4/Position",
+    "PaintLevel": "Factory/Machine1/5/PaintLevel",
+    "SurfaceQuality": "Factory/Machine1/6/SurfaceQuality"
+}
 
 # Subscribe to all Sensors at Base Topic
 mqttc = mqtt.Client()
@@ -27,93 +31,33 @@ def publish_To_Topic(topic, message):
     print("")
 
 
-# FAKE SENSOR
-
-toggle = 0
-
-
 def publish_Fake_Sensor_Values_to_MQTT():
     threading.Timer(1.0, publish_Fake_Sensor_Values_to_MQTT).start()
-    global toggle
-    
 
-    if toggle == 0:
-        Humidity_Fake_Value = float("{0:.2f}".format(random.uniform(50, 90.01)))
+    # Generate fake sensor values
+    Humidity_Fake_Value = float("{0:.2f}".format(random.uniform(50, 90.01)))
+    Temperature_Fake_Value = float("{0:.2f}".format(random.uniform(30, 60.01)))
+    Flow_Fake_Value = float("{0:.2f}".format(random.uniform(0, 50.01)))
+    Position_Fake_Value = int(random.randint(0, 1))
+    PaintLevel_Fake_Value = float("{0:.2f}".format(random.uniform(0, 1000.01)))
+    SurfaceQuality_Fake_Value = int(random.randint(0, 1))
 
-        Humidity_Data = {}
-        Humidity_Data['Sensor_ID'] = "Type-1"
-        Humidity_Data['Date'] = datetime.today().strftime("%d-%b-%Y %H:%M:%S:%f")
-        Humidity_Data['Humidity'] = Humidity_Fake_Value
-        Humidity_json_data = json.dumps(Humidity_Data)
-
-        print("Publishing fake Humidity Value: " + str(Humidity_Fake_Value) + "...")
-        publish_To_Topic(MQTT_Topic_Humidity, Humidity_json_data)
-        toggle = 1
-
-    elif toggle == 1:
-        Temperature_Fake_Value = float("{0:.2f}".format(random.uniform(30, 60.01)))
-
-        Temperature_Data = {}
-        Temperature_Data['Sensor_ID'] = "Type-2"
-        Temperature_Data['Date'] = datetime.today().strftime("%d-%b-%Y %H:%M:%S:%f")
-        Temperature_Data['Temperature'] = Temperature_Fake_Value
-        Temperature_json_data = json.dumps(Temperature_Data)
-
-        print("Publishing fake Temperature Value: " + str(Temperature_Fake_Value) + "...")
-        publish_To_Topic(MQTT_Topic_Temperature, Temperature_json_data)
-        toggle = 2
-
-    elif toggle == 2:
-        Flow_Fake_Value = float("{0:.2f}".format(random.uniform(0, 50.01)))
-
-        Flow_Data = {}
-        Flow_Data['Sensor_ID'] = "Type-3"
-        Flow_Data['Date'] = datetime.today().strftime("%d-%b-%Y %H:%M:%S:%f")
-        Flow_Data['Flow'] = Flow_Fake_Value
-        Flow_json_data = json.dumps(Flow_Data)
-
-        print("Publishing fake Flow Value: " + str(Flow_Fake_Value) + "...")
-        publish_To_Topic(MQTT_Topic_Flow, Flow_json_data)
-        toggle = 3
-
-    elif toggle == 3:
-        Position_Fake_Value = int(random.randint(0,1))
-
-        Position_Data = {}
-        Position_Data['Sensor_ID'] = "Type-4"
-        Position_Data['Date'] = datetime.today().strftime("%d-%b-%Y %H:%M:%S:%f")
-        Position_Data['Position'] = Position_Fake_Value
-        Position_json_data = json.dumps(Position_Data)
-
-        print("Publishing fake Position Value: " + str(Position_Fake_Value) + "...")
-        publish_To_Topic(MQTT_Topic_Position, Position_json_data)
-        toggle = 4
-
-    elif toggle == 4:
-        PaintLevel_Fake_Value = float("{0:.2f}".format(random.uniform(0, 1000.01)))
-
-        PaintLevel_Data = {}
-        PaintLevel_Data['Sensor_ID'] = "Type-5"
-        PaintLevel_Data['Date'] = datetime.today().strftime("%d-%b-%Y %H:%M:%S:%f")
-        PaintLevel_Data['PaintLevel'] = PaintLevel_Fake_Value
-        PaintLevel_json_data = json.dumps(PaintLevel_Data)
-
-        print("Publishing fake PaintLevel Value: " + str(PaintLevel_Fake_Value) + "...")
-        publish_To_Topic(MQTT_Topic_PaintLevel, PaintLevel_json_data)
-        toggle = 5
-
-    elif toggle == 5:
-        SurfaceQuality_Fake_Value = int(random.randint(0,1))
-
-        SurfaceQuality_Data = {}
-        SurfaceQuality_Data['Sensor_ID'] = "Type-6"
-        SurfaceQuality_Data['Date'] = datetime.today().strftime("%d-%b-%Y %H:%M:%S:%f")
-        SurfaceQuality_Data['SurfaceQuality'] = SurfaceQuality_Fake_Value
-        SurfaceQuality_json_data = json.dumps(SurfaceQuality_Data)
-
-        print("Publishing fake SurfaceQuality Value: " + str(SurfaceQuality_Fake_Value) + "...")
-        publish_To_Topic(MQTT_Topic_SurfaceQuality, SurfaceQuality_json_data)
-        toggle = 0
+    # Prepare data for each sensor and publish to its specific topic
+    for sensor, value in {
+        "Temperature": Temperature_Fake_Value,
+        "Humidity": Humidity_Fake_Value,
+        "Flow": Flow_Fake_Value,
+        "Position": Position_Fake_Value,
+        "PaintLevel": PaintLevel_Fake_Value,
+        "SurfaceQuality": SurfaceQuality_Fake_Value
+    }.items():
+        sensor_topic = MQTT_Topics[sensor]
+        sensor_data_json = json.dumps({
+            "Sensor_ID": f"Type-{list(MQTT_Topics.keys()).index(sensor) + 1}",
+            "Date": datetime.today().strftime("%d-%b-%Y %H:%M:%S:%f"),
+            sensor: value
+        })
+        publish_To_Topic(sensor_topic, sensor_data_json)
 
 
 publish_Fake_Sensor_Values_to_MQTT()
