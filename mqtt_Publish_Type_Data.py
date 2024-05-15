@@ -1,7 +1,6 @@
-from faker import Faker
+
 import paho.mqtt.client as mqtt
 import random
-from faker.providers import color
 import threading
 import json
 from datetime import datetime
