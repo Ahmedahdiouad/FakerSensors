@@ -1,161 +1,57 @@
+import paho.mqtt.client as mqtt
+import random
 import json
-import sqlite3
+import threading
+from datetime import datetime
+import time
 
-# SQLite DB Name
-DB_Name = "IoT.sqlite3"
+# MQTT Brokers Settings
+brokers = [
+    {"broker": "test.mosquitto.org", "port": 1883, "topics": {
+        "Temperature": "Factory/Machine1/1/Temperature",
+        "Humidity": "Factory/Machine1/2/Humidity",
+        "Flow": "Factory/Machine1/3/Flow",
+        "Position": "Factory/Machine1/4/Position",
+        "PaintLevel": "Factory/Machine1/5/PaintLevel",
+        "SurfaceQuality": "Factory/Machine1/6/SurfaceQuality"
+    }},
+    {"broker": "test.mosquitto.org", "port": 1883, "topics": ["machines_1", "machines_2", "machines_3", "machines_4"]}
+]
 
-# Database Manager Class
-class DatabaseManager():
-    def __init__(self):
-        print("Initializing DatabaseManager...")
-        self.conn = sqlite3.connect(DB_Name)
-        self.conn.execute('pragma foreign_keys = on')
-        self.conn.commit()
-        self.cur = self.conn.cursor()
+# Function to publish data to MQTT broker
+def publish_to_broker(client, broker, topic, message):
+    if isinstance(topic, str):
+        client.publish(topic, message, qos=2)
+    else:
+        client.publish(topic, json.dumps(message))
 
-    def add_del_update_db_record(self, sql_query, args=()):
-        self.cur.execute(sql_query, args)
-        self.conn.commit()
-        return
+# Function to generate and publish fake sensor values to MQTT brokers
+def publish_fake_sensor_values():
+    threading.Timer(1.0, publish_fake_sensor_values).start()
 
-    def __del__(self):
-        self.cur.close()
-        self.conn.close()
+    for broker_info in brokers:
+        client = mqtt.Client()
+        client.connect(broker_info["broker"], broker_info["port"])
 
-# Resource Management (Identification, Registration, Intelligent Broker)
-class ResourceManager:
-    def identify_resources(self):
-        # Code for identifying resources
-        pass
-    
-    def register_resources(self):
-        # Code for registering resources
-        pass
-    
-    def intelligent_broker(self):
-        # Code for intelligent broker
-        pass
+        for sensor, value in generate_sensor_data().items():
+            topic = broker_info["topics"][sensor] if isinstance(broker_info["topics"], dict) else random.choice(broker_info["topics"])
+            message = {
+                "Sensor_ID": f"Type-{list(broker_info['topics'].keys()).index(sensor) + 1}",
+                "Date": datetime.today().strftime("%d-%b-%Y %H:%M:%S:%f"),
+                sensor: value
+            }
+            publish_to_broker(client, broker_info["broker"], topic, message)
 
-# Event Management
-class EventManager:
-    def handle_events(self):
-        # Code for handling events
-        pass
+# Function to generate fake sensor data
+def generate_sensor_data():
+    return {
+        "Temperature": round(random.uniform(30, 60), 2),
+        "Humidity": round(random.uniform(50, 90), 2),
+        "Flow": round(random.uniform(0, 50), 2),
+        "Position": random.randint(0, 1),
+        "PaintLevel": round(random.uniform(0, 1000), 2),
+        "SurfaceQuality": random.randint(0, 1)
+    }
 
-# Data Management
-class DataManager:
-    def save_data(self, data_type, jsonData):
-        # Code for saving data to respective DB table based on data_type
-        pass
-
-# Recovery Management
-class RecoveryManager:
-    def recover_data(self):
-        # Code for recovering data
-        pass
-
-# Function to save Temperature to DB Table
-def Temperature_Data_Handler(jsonData):
-    # Parse Data
-    json_Dict = json.loads(jsonData)
-    SensorID = json_Dict['Sensor_ID']
-    Data_and_Time = json_Dict['Date']
-    Temperature = json_Dict['Temperature']
-
-    # Push into DB Table
-    dbObj = DatabaseManager()
-    dbObj.add_del_update_db_record("INSERT INTO Temperature_Data (SensorID, Date_n_Time, Temperature) VALUES (?,?,?)", [SensorID, Data_and_Time, Temperature])
-    del dbObj
-    print("Inserted Temperature Data into Database.")
-    print("")
-
-# Function to save Humidity to DB Table
-def Humidity_Data_Handler(jsonData):
-    # Parse Data
-    json_Dict = json.loads(jsonData)
-    SensorID = json_Dict['Sensor_ID']
-    Data_and_Time = json_Dict['Date']
-    Humidity = json_Dict['Humidity']
-
-    # Push into DB Table
-    dbObj = DatabaseManager()
-    dbObj.add_del_update_db_record("INSERT INTO Humidity_Data (SensorID, Date_n_Time, Humidity) VALUES (?,?,?)", [SensorID, Data_and_Time, Humidity])
-    del dbObj
-    print("Inserted Humidity Data into Database.")
-    print("")
-
-# Function to save Flow Rate to DB Table
-def Flow_Data_Handler(jsonData):
-    # Parse Data
-    json_Dict = json.loads(jsonData)
-    SensorID = json_Dict['Sensor_ID']
-    Data_and_Time = json_Dict['Date']
-    Flow = json_Dict['Flow']
-
-    # Push into DB Table
-    dbObj = DatabaseManager()
-    dbObj.add_del_update_db_record("INSERT INTO Flow_Data (SensorID, Date_n_Time, Flow) VALUES (?,?,?)", [SensorID, Data_and_Time, Flow])
-    del dbObj
-    print("Inserted Flow Data into Database.")
-    print("")
-
-# Function to save Position to DB Table
-def Position_Data_Handler(jsonData):
-    # Parse Data
-    json_Dict = json.loads(jsonData)
-    SensorID = json_Dict['Sensor_ID']
-    Data_and_Time = json_Dict['Date']
-    Position = json_Dict['Position']
-
-    # Push into DB Table
-    dbObj = DatabaseManager()
-    dbObj.add_del_update_db_record("INSERT INTO Position_Data (SensorID, Date_n_Time, Position) VALUES (?,?,?)", [SensorID, Data_and_Time, Position])
-    del dbObj
-    print("Inserted Position Data into Database.")
-    print("")
-
-# Function to save PaintLevel to DB Table
-def PaintLevel_Data_Handler(jsonData):
-    # Parse Data
-    json_Dict = json.loads(jsonData)
-    SensorID = json_Dict['Sensor_ID']
-    Data_and_Time = json_Dict['Date']
-    PaintLevel = json_Dict['PaintLevel']
-
-    # Push into DB Table
-    dbObj = DatabaseManager()
-    dbObj.add_del_update_db_record("INSERT INTO PaintLevel_Data (SensorID, Date_n_Time, PaintLevel) VALUES (?,?,?)", [SensorID, Data_and_Time, PaintLevel])
-    del dbObj
-    print("Inserted PaintLevel Data into Database.")
-    print("")
-
-# Function to save SurfaceQuality to DB Table
-def SurfaceQuality_Data_Handler(jsonData):
-    # Parse Data
-    json_Dict = json.loads(jsonData)
-    SensorID = json_Dict['Sensor_ID']
-    Data_and_Time = json_Dict['Date']
-    SurfaceQuality = json_Dict['SurfaceQuality']
-
-    # Push into DB Table
-    dbObj = DatabaseManager()
-    dbObj.add_del_update_db_record("INSERT INTO SurfaceQuality_Data (SensorID, Date_n_Time, SurfaceQuality) VALUES (?,?,?)", [SensorID, Data_and_Time, SurfaceQuality])
-    del dbObj
-    print("Inserted SurfaceQuality Data into Database.")
-    print("")
-
-# Master Function to Select DB Function based on MQTT Topic
-def sensor_Data_Handler(Topic, jsonData):
-    if Topic == "Factory/Machine1/1/Temperature":
-        Temperature_Data_Handler(jsonData)
-    elif Topic == "Factory/Machine1/2/Humidity":
-        Humidity_Data_Handler(jsonData)
-    elif Topic == "Factory/Machine1/3/Flow":
-        Flow_Data_Handler(jsonData)
-    elif Topic == "Factory/Machine1/4/Position":
-        Position_Data_Handler(jsonData)
-    elif Topic == "Factory/Machine1/5/PaintLevel":
-        PaintLevel_Data_Handler(jsonData)
-    elif Topic == "Factory/Machine1/6/SurfaceQuality":
-        SurfaceQuality_Data_Handler(jsonData)
-
+# Start publishing fake sensor values to MQTT brokers
+publish_fake_sensor_values()

@@ -1,7 +1,3 @@
-#------------------------------------------
-#--- Date:  09/04/2024
-#--- Python Ver: 3.12.3
-#------------------------------------------
 
 import paho.mqtt.client as mqtt
 from store_Sensor_Data_to_DB import sensor_Data_Handler
@@ -9,7 +5,6 @@ from store_Sensor_Data_to_DB import sensor_Data_Handler
 # MQTT Settings
 MQTT_Broker = "test.mosquitto.org"
 MQTT_Port = 1883
-Keep_Alive_Interval = 45
 MQTT_Topic = "Factory/Machine1/#"
 
 # Function to subscribe to all sensors at base topic

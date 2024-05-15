@@ -1,4 +1,3 @@
-
 import paho.mqtt.client as mqtt
 import random
 import threading
@@ -25,7 +24,7 @@ mqttc.connect(MQTT_Broker, MQTT_Port)
 
 
 def publish_To_Topic(topic, message):
-    mqttc.publish(topic, message)
+    mqttc.publish(topic, message, qos=2)  # Set QoS to 2
     print("Published: " + str(message) + " " + "on MQTT Topic: " + str(topic))
     print("")
 
