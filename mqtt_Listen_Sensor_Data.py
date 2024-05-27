@@ -5,7 +5,7 @@ from store_Sensor_Data_to_DB import sensor_Data_Handler
 # MQTT Settings
 MQTT_Broker = "test.mosquitto.org"
 MQTT_Port = 1883
-MQTT_Topic = "Factory/Machine1/#"
+MQTT_Topic = "Factory/#"
 
 # Function to subscribe to all sensors at base topic
 def on_connect(client, userdata, flags, rc):

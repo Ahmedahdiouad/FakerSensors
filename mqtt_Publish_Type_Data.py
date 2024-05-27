@@ -1,4 +1,3 @@
-
 import paho.mqtt.client as mqtt
 import random
 import threading
@@ -11,12 +10,12 @@ MQTT_Port = 1883
 
 # Topics for each sensor
 MQTT_Topics = {
-    "Temperature": "Factory/Machine1/1/Temperature",
-    "Humidity": "Factory/Machine1/2/Humidity",
-    "Flow": "Factory/Machine1/3/Flow",
-    "Position": "Factory/Machine1/4/Position",
-    "PaintLevel": "Factory/Machine1/5/PaintLevel",
-    "SurfaceQuality": "Factory/Machine1/6/SurfaceQuality"
+    "Temperature": "Factory/Machine1/Temperature",
+    "Humidity": "Factory/Machine1/Humidity",
+    "Flow": "Factory/Machine1/Flow",
+    "Position": "Factory/Machine1/Position",
+    "PaintLevel": "Factory/Machine1/PaintLevel",
+    "SurfaceQuality": "Factory/Machine1/SurfaceQuality"
 }
 
 # Subscribe to all Sensors at Base Topic

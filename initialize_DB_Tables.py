@@ -55,6 +55,30 @@ create table Flow_Data (
   Date_n_Time text,
   Flow text
 );
+
+drop table if exists Resources;
+create table Resources (
+  id integer primary key autoincrement,
+  ResourceID text
+);
+
+drop table if exists Events;
+create table Events (
+  id integer primary key autoincrement,
+  Event text
+);
+
+drop table if exists RawData;
+create table RawData (
+  id integer primary key autoincrement,
+  RawData text
+);
+
+drop table if exists BackupData;
+create table BackupData (
+  id integer primary key autoincrement,
+  BackupData text
+);
 """
 
 #Connect or Create DB File
