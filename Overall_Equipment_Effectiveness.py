@@ -159,7 +159,7 @@ while True:
                 availability, performance, quality, Overall_Equipment_Effectiveness, timestamp)
         insert_data(cursor, conn, table_name, data)
 
-    # Wait for 10 seconds before repeating
+    # Wait for 1 seconds before repeating
     time.sleep(1)
 
 # Close the connection

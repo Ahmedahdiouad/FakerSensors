@@ -15,8 +15,6 @@ create table Temperature_Data (
   Date_n_Time text,
   Temperature text
 );
-
-
 drop table if exists Humidity_Data ;
 create table Humidity_Data (
   id integer primary key autoincrement,
@@ -24,37 +22,58 @@ create table Humidity_Data (
   Date_n_Time text,
   Humidity text
 );
-drop table if exists Position_Data ;
-create table Position_Data (
+
+create table if not exists Position_Data (
   id integer primary key autoincrement,
   SensorID text,
   Date_n_Time text,
   Position text
 );
 
-drop table if exists PaintLevel_Data ;
-create table PaintLevel_Data (
+
+create table if not exists PaintLevel_Data (
   id integer primary key autoincrement,
   SensorID text,
   Date_n_Time text,
   PaintLevel text
 );
 
-drop table if exists SurfaceQuality_Data ;
-create table SurfaceQuality_Data (
+
+create table if not exists SurfaceQuality_Data (
   id integer primary key autoincrement,
   SensorID text,
   Date_n_Time text,
   SurfaceQuality text
 );
 
-drop table if exists Flow_Data ;
-create table Flow_Data (
+
+create table if not exists Flow_Data (
   id integer primary key autoincrement,
   SensorID text,
   Date_n_Time text,
   Flow text
 );
+
+
+
+
+
+create table if not exists Resources (
+  id integer primary key autoincrement,
+  ResourceID text
+);
+
+
+create table if not exists Events (
+  id integer primary key autoincrement,
+  SensorID text,
+  Date_n_Time,
+  EventType text,
+  Value text
+);
+
+
+
 """
 
 #Connect or Create DB File
